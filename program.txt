@@ -2,60 +2,59 @@
 /**
  * File Scanner for Backdoor Detection
  *
- * Scan directories for potentially malicious files.
+ * Scans directories for potentially malicious files and suspicious patterns.
  */
 
 function scan_directory($directory) {
     $results = [];
 
-    // Open the directory
-    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
-    foreach ($iterator as $file) {
-        // Skip directories
-        if ($file->isDir()) {
-            continue;
-        }
+    try {
+        // Use RecursiveDirectoryIterator for scanning subdirectories
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
+        
+        foreach ($iterator as $file) {
+            if ($file->isDir() || !$file->isReadable()) {
+                continue; // Skip directories and unreadable files
+            }
 
-        $file_path = $file->getPathname();
-        $file_content = file_get_contents($file_path);
+            $file_path = $file->getPathname();
+            $file_content = @file_get_contents($file_path);
 
-        // Check for suspicious patterns
-        $patterns = [
-            '/base64_encode\s*\(/', // base64_encode()
-            '/base64_decode\s*\(/', // base64_decode()
-            '/FATHURFREAKZ/',        // Specific keyword
-            '/eval\s*\(/',          // eval()
-            '/system\s*\(/',        // system()
-            '/gzinflate\s*\(/',     // gzinflate()
-            '/str_rot13\s*\(/',     // str_rot13()
-            '/convert_uu\s*\(/',    // convert_uu()
-            '/shell_data/',           // shell_data
-            '/getimagesize\s*\(/',  // getimagesize()
-            '/magicboom/',            // Specific keyword
-            '/mysql_connect\s*\(/', // mysql_connect()
-            '/mysqli_connect\s*\(/',// mysqli_connect()
-            '/basename\s*\(/',      // basename()
-            '/exec\s*\(/',          // exec()
-            '/shell_exec\s*\(/',    // shell_exec()
-            '/fwrite\s*\(/',        // fwrite()
-            '/str_replace\s*\(/',   // str_replace()
-            '/mail\s*\(/',          // mail()
-            '/file_get_contents\s*\(/', // file_get_contents()
-            '/url_get_contents\s*\(/',  // url_get_contents()
-            '/move_uploaded_file\s*\(/', // move_uploaded_file()
-            '/symlink\s*\(/',       // symlink()
-            '/substr\s*\(/',        // substr()
-            '/pathinfo\s*\(/',      // pathinfo()
-            '/__file__/',             // __file__
-            '/__halt_compiler/'       // __halt_compiler
-        ];
+            // Skip empty or unreadable files
+            if ($file_content === false || trim($file_content) === '') {
+                continue;
+            }
 
-        foreach ($patterns as $pattern) {
-            if (preg_match($pattern, $file_content)) {
-                $results[] = $file_path;
-                break;
+            // Suspicious patterns to check for
+            $patterns = [
+                '/base64_(encode|decode)\s*\(/i',
+                '/eval\s*\(/i',
+                '/system\s*\(/i',
+                '/gzinflate\s*\(/i',
+                '/str_rot13\s*\(/i',
+                '/convert_uu\s*\(/i',
+                '/shell_exec\s*\(/i',
+                '/exec\s*\(/i',
+                '/move_uploaded_file\s*\(/i',
+                '/fwrite\s*\(/i',
+                '/file_get_contents\s*\(/i',
+                '/mysql_connect\s*\(/i',
+                '/mysqli_connect\s*\(/i',
+                '/symlink\s*\(/i',
+                '/magicboom|FATHURFREAKZ|shell_data/i', // Specific keywords
+                '/__halt_compiler/i',
+            ];
+
+            // Check patterns in the file content
+            foreach ($patterns as $pattern) {
+                if (preg_match($pattern, $file_content)) {
+                    $results[] = $file_path;
+                    break;
+                }
             }
         }
+    } catch (Exception $e) {
+        echo "<p>Error scanning directory: " . htmlspecialchars($e->getMessage()) . "</p>";
     }
 
     return $results;
@@ -68,6 +67,7 @@ $root_directory = __DIR__;
 $backdoor_files = scan_directory($root_directory);
 
 // Display results
+header('Content-Type: text/html; charset=utf-8');
 echo "<h1>Backdoor Scanner Results</h1>";
 if (!empty($backdoor_files)) {
     echo "<p>Suspicious files detected:</p><ul>";
