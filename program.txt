@@ -2,7 +2,7 @@
 /**
  * File Scanner for Backdoor Detection
  *
- * Scans directories for potentially malicious files and suspicious patterns.
+ * Scans directories for potentially malicious files and suspicious patterns with mass delete option and delay to prevent errors.
  */
 
 function scan_directory($directory) {
@@ -18,6 +18,14 @@ function scan_directory($directory) {
             }
 
             $file_path = $file->getPathname();
+
+            // Only process files with specific extensions
+            $allowed_extensions = ['php', 'phtml', 'shtml'];
+            $file_extension = pathinfo($file_path, PATHINFO_EXTENSION);
+            if (!in_array(strtolower($file_extension), $allowed_extensions)) {
+                continue;
+            }
+
             $file_content = @file_get_contents($file_path);
 
             // Skip empty or unreadable files
@@ -46,11 +54,20 @@ function scan_directory($directory) {
             ];
 
             // Check patterns in the file content
+            $is_dangerous = false;
             foreach ($patterns as $pattern) {
                 if (preg_match($pattern, $file_content)) {
-                    $results[] = $file_path;
+                    $is_dangerous = true;
                     break;
                 }
+            }
+
+            if ($is_dangerous) {
+                $results[] = [
+                    'file_path' => $file_path,
+                    'content' => $file_content,
+                    'is_webshell' => preg_match('/eval\s*\(|base64_decode\s*\(/i', $file_content) // Strong indicator for webshell
+                ];
             }
         }
     } catch (Exception $e) {
@@ -60,8 +77,12 @@ function scan_directory($directory) {
     return $results;
 }
 
-// Define the root directory to scan
-$root_directory = __DIR__;
+// Get the directory to scan from input or default to current directory
+$root_directory = isset($argv[1]) ? $argv[1] : __DIR__;
+
+if (!is_dir($root_directory)) {
+    die("<p>Error: Invalid directory specified.</p>");
+}
 
 // Run the scan
 $backdoor_files = scan_directory($root_directory);
@@ -71,11 +92,40 @@ header('Content-Type: text/html; charset=utf-8');
 echo "<h1>Backdoor Scanner Results</h1>";
 if (!empty($backdoor_files)) {
     echo "<p>Suspicious files detected:</p><ul>";
-    foreach ($backdoor_files as $file) {
-        echo "<li>" . htmlspecialchars($file) . "</li>";
+    echo "<form method='post' action=''>";
+    foreach ($backdoor_files as $file_info) {
+        $color = $file_info['is_webshell'] ? 'red' : 'black'; // Highlight dangerous webshell files in red
+        echo "<li style='color: $color;'>" . htmlspecialchars($file_info['file_path']) . "<br><textarea rows='10' cols='80' style='color: $color;'>" . htmlspecialchars($file_info['content']) . "</textarea>";
+        echo "<br><input type='checkbox' name='delete_files[]' value='" . htmlspecialchars($file_info['file_path']) . "'> Mark for deletion</li>";
+        // Introduce a sleep delay to prevent server overload
+        sleep(1);
     }
-    echo "</ul>";
+    echo "<input type='submit' value='Delete Selected Files'>";
+    echo "</form></ul>";
+
+    // Handle deletion if the form is submitted
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_files'])) {
+        foreach ($_POST['delete_files'] as $file_to_delete) {
+            if (file_exists($file_to_delete)) {
+                unlink($file_to_delete);
+                echo "<p>Deleted: " . htmlspecialchars($file_to_delete) . "</p>";
+            }
+        }
+    }
 } else {
     echo "<p>No suspicious files detected.</p>";
 }
+
+// Optional: Log results to a file
+$log_file = $root_directory . DIRECTORY_SEPARATOR . 'scan_results.log';
+$log_data = "Scan completed at: " . date('Y-m-d H:i:s') . "\n";
+if (!empty($backdoor_files)) {
+    $log_data .= "Suspicious files detected:\n";
+    foreach ($backdoor_files as $file_info) {
+        $log_data .= $file_info['file_path'] . "\n";
+    }
+} else {
+    $log_data .= "No suspicious files detected.\n";
+}
+file_put_contents($log_file, $log_data, FILE_APPEND);
 ?>
