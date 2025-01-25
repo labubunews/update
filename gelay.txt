@@ -51,12 +51,12 @@ HTML;
 }
 
 if (!isset($_SESSION['authenticated'])) {
-    $stored_hashed_password = '$2y$10$ACTF7jbtyof6YoTCqitwLOxQ9II8xitPKC4pNi6SQjZM3HXkKiCZ.'; // Use PASSWORD_DEFAULT hash you can use this site https://phppasswordhash.com/ for generating your password
+    $stored_hashed_password = '$2y$10$ACTF7jbtyof6YoTCqitwLOxQ9II8xitPKC4pNi6SQjZM3HXkKiCZ.'; // Gunakan hash PASSWORD_DEFAULT, bisa menggunakan https://phppasswordhash.com/
 
     if (isset($_POST['pass']) && password_verify($_POST['pass'], $stored_hashed_password)) {
         $_SESSION['authenticated'] = true;
     } else {
-        show_login_page();
+        show_404();
     }
 }
 ?>
