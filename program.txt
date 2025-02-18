@@ -1,0 +1,87 @@
+<?php
+/**
+ * Enhanced File Scanner for Backdoor Detection
+ * Detects obfuscated code, hex encoding, and suspicious PHP functions.
+ */
+function scan_directory($directory) {
+    $results = [];
+    try {
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS));
+        foreach ($iterator as $file) {
+            if ($file->isDir() || !$file->isReadable()) {
+                continue;
+            }
+            $file_path = $file->getPathname();
+            $file_content = @file_get_contents($file_path);
+
+            // Skip empty files
+            if ($file_content === false || trim($file_content) === '') {
+                continue;
+            }
+
+            // Suspicious patterns
+            $patterns = [
+                '/\beval\s*\(/i',                    // eval()
+                '/\bsystem\s*\(/i',                  // system()
+                '/\bshell_exec\s*\(/i',             // shell_exec()
+                '/\bexec\s*\(/i',                   // exec()
+                '/\bbase64_decode\s*\(/i',          // base64_decode()
+                '/\bgzinflate\s*\(/i',              // gzinflate()
+                '/\bstr_rot13\s*\(/i',              // str_rot13()
+                '/\bconvert_uu\s*\(/i',             // convert_uu()
+                '/\bfile_get_contents\s*\(/i',      // file_get_contents()
+                '/\bmail\s*\(/i',                   // mail()
+                '/\\x[0-9a-fA-F]{2,}/',             // Hex obfuscation
+                '/\$\_(GET|POST|REQUEST|FILES)\s*\[.*\]/' // Superglobals
+            ];
+
+            $is_dangerous = false;
+            $detected_patterns = [];
+
+            foreach ($patterns as $pattern) {
+                if (preg_match($pattern, $file_content, $matches)) {
+                    $is_dangerous = true;
+                    $detected_patterns[] = $matches[0];
+                }
+            }
+
+            if ($is_dangerous) {
+                $is_webshell = preg_match('/eval\s*\(|base64_decode\s*\(|\\x[0-9a-fA-F]{2,}/i', $file_content);
+                $results[] = [
+                    'file_path' => $file_path,
+                    'content' => substr($file_content, 0, 500),
+                    'is_webshell' => $is_webshell,
+                    'detected_patterns' => $detected_patterns
+                ];
+            }
+        }
+    } catch (Exception $e) {
+        echo "<p>Error: " . htmlspecialchars($e->getMessage()) . "</p>";
+    }
+    return $results;
+}
+
+// Set root directory for scanning
+$root_directory = __DIR__;
+$backdoor_files = scan_directory($root_directory);
+
+// Display results with highlighted modifications
+header('Content-Type: text/html; charset=utf-8');
+echo "<h1>Backdoor Scanner Results</h1>";
+if (!empty($backdoor_files)) {
+    echo "<p>Suspicious files detected:</p><ul>";
+    foreach ($backdoor_files as $file_info) {
+        $color = $file_info['is_webshell'] ? 'red' : 'black';
+        echo "<li style='color: $color;'><strong>" . htmlspecialchars($file_info['file_path']) . "</strong>";
+        echo "<br><textarea rows='10' cols='80' style='color: $color;'>" . htmlspecialchars($file_info['content']) . "</textarea>";
+        echo "<br><strong>Modified Code Detected:</strong> ";
+        foreach ($file_info['detected_patterns'] as $pattern) {
+            echo "<span style='color: orange; font-weight: bold;'>$pattern</span> ";
+        }
+        echo "</li>";
+    }
+    echo "</ul>";
+} else {
+    echo "<p>No suspicious files detected.</p>";
+}
+?>
