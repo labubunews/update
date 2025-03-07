@@ -1,7 +1,5 @@
 <?php
 session_start();
-ob_clean();
-flush();
 @set_time_limit(0);
 @clearstatcache();
 @ini_set('error_log', NULL);
